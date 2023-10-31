@@ -1,112 +1,98 @@
-﻿
-#include <iostream>
+﻿#include <iostream>
 #include<fstream>
 #include<Windows.h>
+#include<functional> 
 
-double sum(std::istream& stream = std::cin, int size = 0);
-double sum(int size);
 int check_file(std::ifstream& file);
 void ending(int n);
+template <typename T, typename Predicat>
+void Read_and_check(T& x, Predicat condition, const char* message);
+int main_menu();
+int choice_menu();
+int task1(int size, std::istream& stream);
+int task1(int size, int a, int b);
+
 
 int main()
 {
 	SetConsoleOutputCP(1251);
-	short choice;
+	short mainChoice;
 	do
 	{
-		std::cout << "\n1. Ввод чисел с клавиатуры" << '\n';
-		std::cout << "2. Ввод чисел из файла" << '\n';
-		std::cout << "3. Случайный набор чисел" << '\n';
-		std::cout << "4. Завершить работу" << '\n';
-		std::cout << "->";
-		std::cin >> choice;
-		if (choice != 4)
+		mainChoice = main_menu();
+		if (mainChoice != 3)
 		{
-			if (choice == 1)
-			{
-				int n;
-				std::cout << "\nВведите количество элементов: ";
-				std::cin >> n;
-				std::cout << "Сумма элементов: " << sum(std::cin, n) << '\n';
-
-			}
-			if (choice == 2)
+			short choice;
+			do
 			{
 
-				std::ifstream file("data.txt");
-				switch (check_file(file))
+				choice = choice_menu();
+				if (choice != 4)
 				{
-				case -1:
-					std::cout << "\nФайл не найден!\n";
-					break;
-				case 0:
-					std::cout << "\nФайл пустой!\n";
-					break;
-				default:
-				{
-					std::cout << "\nСумма элементов: " << sum(file) << '\n';
+					if (choice == 1)
+					{
+						int size;
+						std::cout << "\nВведите количество элементов: ";
+						Read_and_check(size, [](int x) {return x > 0; }, "\n-> ");
+						if (mainChoice == 1)
+							std::cout << task1(size, std::cin);
+						//std::cout << "Номер первого максимального элемента: " << task1(size, std::cin) << '\n';
+						else
+							std::cout << "in developing...";
+						//std::cout << "Количество элементов, удовлетворяющих условию: " << task2(size, std::cin) << '\n';
+
+					}
+					if (choice == 2)
+					{
+
+						std::ifstream file("data.txt");
+						switch (check_file(file))
+						{
+						case -1:
+							std::cout << "\nФайл не найден!\n";
+							break;
+						case 0:
+							std::cout << "\nФайл пустой!\n";
+							break;
+						default:
+						{
+							int size;
+							file >> size;
+							if (mainChoice == 1)
+								std::cout << task1(size, file);
+							else
+								std::cout << "in developing...";
+							//std::cout << "Номер первого максимального элемента: " << task1(size, std::cin) << '\n';
+
+							//std::cout << "Количество элементов, удовлетворяющих условию: " << task2(size, std::cin) << '\n';
+						}
+						}
+
+
+
+					}
+					if (choice == 3)
+					{
+						int size;
+						std::cout << "\nВведите количество случайных слагаемых: ";
+						Read_and_check(size, [](int x) {return x > 0; }, "\n-> ");
+						std::cout << "Введите диапазон рандома(от A до B): ";
+						int a, b;
+						Read_and_check(a, [](int x) {return true; }, "\n-> ");
+						Read_and_check(b, [](int x) {return true; }, "\n-> ");
+						if (mainChoice == 1)
+							std::cout << task1(size, a, b);
+						//std::cout << "Номер первого максимального элемента: " << task1(size, std::cin) << '\n';
+						else
+							std::cout << "in developing...";
+						//std::cout << "Количество элементов, удовлетворяющих условию: " << task2(size, std::cin) << '\n';
+
+					}
 				}
-				}
-
-
-
-			}
-			if (choice == 3)
-			{
-				int n;
-				std::cout << "\nВведите количество случайных слагаемых: ";
-				std::cin >> n;
-				std::cout << "Сумма элементов: " << sum(n) << '\n';
-
-			}
+			} while (choice != 4);
 		}
-	} while (choice != 4);
+	} while (mainChoice != 3);
 }
-
-
-double sum(std::istream& stream, int size)
-{
-	double x;
-	double sum = 0;
-	if (&stream == &std::cin)
-	{
-		ending(size);
-		for (int i = 0; i < size; i++)
-		{
-			stream >> x;
-			sum += x;
-		}
-	}
-	else
-	{
-		while (stream >> x)
-		{
-			sum += x;
-		}
-	}
-
-	return sum;
-}
-
-double sum(int size)
-{
-	double x;
-	double sum = 0;
-	std::cout << "Введите диапазон рандома(от A до B): ";
-	int a, b;
-	std::cin >> a >> b;
-	std::cout << "\nСлучайные элементы: ";
-	for (int i = 0; i < size; i++)
-	{
-		x = a + rand() % (b - a + 1);
-		std::cout << x << ' ';
-		sum += x;
-	}
-	std::cout << '\n';
-
-	return sum;
-}
-
 
 int check_file(std::ifstream& file)
 {
@@ -133,7 +119,7 @@ void ending(int n)
 			break;
 		case 2:
 		case 3:
-		case4:
+		case 4:
 			std::cout << "а: ";
 			break;
 		default:
@@ -141,5 +127,110 @@ void ending(int n)
 			break;
 
 		}
+	}
+}
+int main_menu()
+{
+	std::cout << "\nМеню";
+	std::cout << "\n1. Найти номер первого максимального элемента последовательности\n";
+	std::cout << "2. Найти количество положительных элементов после первого элемента, оканчивающегося на заданную цифру\n";
+	std::cout << "3. Завершить работу" << '\n';
+
+	std::function<bool(int)> Lambda = [](int x)->bool
+		{
+			return x >= 1 && x <= 3;
+		};
+	int choice = 0;
+	Read_and_check(choice, Lambda, "\n->");
+	return choice;
+}
+int choice_menu()
+{
+	std::cout << "\n1. Ввод чисел с клавиатуры" << '\n';
+	std::cout << "2. Ввод чисел из файла" << '\n';
+	std::cout << "3. Случайный набор чисел" << '\n';
+	std::cout << "4. Закрыть решение задачи" << '\n';
+	std::function<bool(int)> Lambda = [](int x)->bool
+		{
+			return x >= 1 && x <= 4;
+		};
+	int choice = 0;
+	Read_and_check(choice, Lambda, "\n-> ");
+	return choice;
+}
+
+int task1(int size, std::istream& stream)
+{
+	int x;
+	int max;
+	int numb = 1;
+
+	if (&stream == &std::cin)
+	{
+		Read_and_check(max, [](int x) {return true; }, "\n-> ");
+		for (int i = 2; i <= size; ++i)
+		{
+			Read_and_check(x, [](int x) {return true; },"");
+			if (x > max)
+			{
+				max = x;
+				numb = i;
+			}
+		}
+	}
+	else
+	{
+		stream >> max;
+		for (int i = 2; i <= size; ++i)
+		{
+			stream >> x;
+			if (x > max)
+			{
+				max = x;
+				numb = i;
+			}
+		}
+	}
+
+	return numb;
+}
+
+int task1(int size, int a, int b)
+{
+
+	int x;
+	int max = a + rand() % (b - a + 1);
+	std::cout << "\nСлучайные элементы: ";
+	std::cout << max << ' ';
+	int numb = 1;
+	for (int i = 2; i <= size; i++)
+	{
+		x = a + rand() % (b - a + 1);
+		std::cout << x << ' ';
+		if (x > max)
+		{
+			max = x;
+			numb = i;
+		}
+
+	}
+	std::cout << '\n';
+
+	return numb;
+}
+
+
+
+template<typename T, typename Predicat>
+void Read_and_check(T& x, Predicat condition, const char* message)
+{
+	std::cout << message;
+	while (!(std::cin >> x && condition(x)))
+	{
+		std::cout << "Ошибка ввода!\n";
+		std::cin.clear();
+		std::cin.ignore(std::cin.rdbuf()->in_avail());
+		std::cout << message;
+
 	}
 }
