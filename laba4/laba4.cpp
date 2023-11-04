@@ -3,15 +3,24 @@
 #include<Windows.h>
 #include<functional> 
 
+//Вспомогательные функции
 int check_file(std::ifstream& file);
 void ending(int n);
 template <typename T, typename Predicat>
 void Read_and_check(T& x, Predicat condition, const char* message);
+
+//Менюшки
 int main_menu();
 int choice_menu();
+
+//Первая задача
 int task1(int size, std::istream& stream);
 int task1(int size, int a, int b);
 
+//Вторая задача
+int task2(int size,int &count, int endNumb, std::istream& stream,std::function<bool(int)> predicate);
+void print_answer(int ind, int res);
+int task2(int size, int& count, int endNumb,int a, int b, std::function<bool(int)> predicate);
 
 int main()
 {
@@ -25,7 +34,6 @@ int main()
 			short choice;
 			do
 			{
-
 				choice = choice_menu();
 				if (choice != 4)
 				{
@@ -34,13 +42,19 @@ int main()
 						int size;
 						std::cout << "\nВведите количество элементов: ";
 						Read_and_check(size, [](int x) {return x > 0; }, "\n-> ");
-						if (mainChoice == 1)
-							std::cout << task1(size, std::cin);
-						//std::cout << "Номер первого максимального элемента: " << task1(size, std::cin) << '\n';
-						else
-							std::cout << "in developing...";
-						//std::cout << "Количество элементов, удовлетворяющих условию: " << task2(size, std::cin) << '\n';
 
+						if (mainChoice == 1)
+							std::cout << "\nНомер первого максимального элемента: " << task1(size, std::cin) << '\n';
+						else
+						{
+							int endNumb;
+							int count = 0;
+							std::cout << "\nВведите цифру окончания числа: ";
+							Read_and_check(endNumb, [](int x) {return x > 0&&x<10; }, "\n-> ");
+
+							int res = task2(size,count, endNumb, std::cin, [endNumb](int x) {return abs(x) % 10 == endNumb; });
+							print_answer(res,count);
+						}
 					}
 					if (choice == 2)
 					{
@@ -59,12 +73,17 @@ int main()
 							int size;
 							file >> size;
 							if (mainChoice == 1)
-								std::cout << task1(size, file);
+								std::cout << "\nНомер первого максимального элемента: " << task1(size, file) << '\n';
 							else
-								std::cout << "in developing...";
-							//std::cout << "Номер первого максимального элемента: " << task1(size, std::cin) << '\n';
+							{
+								int endNumb;
+								int count = 0;
+								std::cout << "\nВведите цифру окончания числа: ";
+								Read_and_check(endNumb, [](int x) {return x > 0 && x < 10; }, "\n-> ");
 
-							//std::cout << "Количество элементов, удовлетворяющих условию: " << task2(size, std::cin) << '\n';
+								int res = task2(size, count, endNumb, file, [endNumb](int x) {return abs(x) % 10 == endNumb; });
+								print_answer(res, count);
+							}
 						}
 						}
 
@@ -76,17 +95,25 @@ int main()
 						int size;
 						std::cout << "\nВведите количество случайных слагаемых: ";
 						Read_and_check(size, [](int x) {return x > 0; }, "\n-> ");
-						std::cout << "Введите диапазон рандома(от A до B): ";
-						int a, b;
-						Read_and_check(a, [](int x) {return true; }, "\n-> ");
-						Read_and_check(b, [](int x) {return true; }, "\n-> ");
-						if (mainChoice == 1)
-							std::cout << task1(size, a, b);
-						//std::cout << "Номер первого максимального элемента: " << task1(size, std::cin) << '\n';
-						else
-							std::cout << "in developing...";
-						//std::cout << "Количество элементов, удовлетворяющих условию: " << task2(size, std::cin) << '\n';
 
+						int a, b;
+						std::cout << "\nВведите диапазон рандома(от A до B): ";
+						Read_and_check(a, [](int x) {return true; }, "\n-> ");
+						Read_and_check(b, [](int x) {return true; }, "");
+
+						if (mainChoice == 1)
+							std::cout << "\nНомер первого максимального элемента: " << task1(size, a,b) << '\n';
+						else
+						{
+							int endNumb;
+							int count = 0;
+
+							std::cout << "\nВведите цифру окончания числа: ";
+							Read_and_check(endNumb, [](int x) {return x > 0 && x < 10; }, "\n-> ");
+
+							int res = task2(size, count, endNumb,a,b, [endNumb](int x) {return abs(x) % 10== endNumb; });
+							print_answer(res, count);
+						}
 					}
 				}
 			} while (choice != 4);
@@ -108,7 +135,7 @@ int check_file(std::ifstream& file)
 
 void ending(int n)
 {
-	std::cout << "Введите " << n << " элемент";
+	std::cout << "\nВведите " << n << " элемент";
 	if (n < 21 && n>10)
 		std::cout << "ов: ";
 	else
@@ -131,10 +158,12 @@ void ending(int n)
 }
 int main_menu()
 {
+	std::cout << "\n--------------\n";
 	std::cout << "\nМеню";
 	std::cout << "\n1. Найти номер первого максимального элемента последовательности\n";
 	std::cout << "2. Найти количество положительных элементов после первого элемента, оканчивающегося на заданную цифру\n";
 	std::cout << "3. Завершить работу" << '\n';
+	std::cout << "\n--------------\n";
 
 	std::function<bool(int)> Lambda = [](int x)->bool
 		{
@@ -146,10 +175,13 @@ int main_menu()
 }
 int choice_menu()
 {
+	std::cout << "\n--------------\n";
 	std::cout << "\n1. Ввод чисел с клавиатуры" << '\n';
 	std::cout << "2. Ввод чисел из файла" << '\n';
 	std::cout << "3. Случайный набор чисел" << '\n';
 	std::cout << "4. Закрыть решение задачи" << '\n';
+	std::cout << "\n--------------\n";
+
 	std::function<bool(int)> Lambda = [](int x)->bool
 		{
 			return x >= 1 && x <= 4;
@@ -167,7 +199,8 @@ int task1(int size, std::istream& stream)
 
 	if (&stream == &std::cin)
 	{
-		Read_and_check(max, [](int x) {return true; }, "\n-> ");
+		ending(size);
+		Read_and_check(max, [](int x) {return true; }, "\n");
 		for (int i = 2; i <= size; ++i)
 		{
 			Read_and_check(x, [](int x) {return true; },"");
@@ -219,7 +252,100 @@ int task1(int size, int a, int b)
 	return numb;
 }
 
+int task2(int size, int &count, int endNumb, std::istream& stream, std::function<bool(int)> predicate)
+{
 
+	int x;
+	int flag = 0;
+	int result = 2;
+	if(&stream==&std::cin)
+	{
+		ending(size);
+
+		for (int i = 1; i <= size; ++i)
+		{
+			Read_and_check(x, [](int x) {return true; }, "");
+			if (!flag)
+			{
+
+				if (predicate(x))
+					flag = i;
+			}
+			else
+				if (x > 0)
+					count++;
+		}
+	}
+	else
+	{
+		for (int i = 1; i <= size; ++i)
+		{
+			stream >> x;
+			if (!flag)
+			{
+
+				if (predicate(x))
+					flag = i;
+			}
+			else
+				if (x > 0)
+					count++;
+		}
+	}
+	if (!flag)
+		result = -1;
+	else
+		if (flag == size)
+			result = 0;
+
+	return result;
+}
+
+int task2(int size, int& count, int endNumb, int a, int b, std::function<bool(int)> predicate)
+{
+
+	int x;
+	int flag = 0;
+	int result = 2;
+
+	std::cout << "\nСлучайные элементы: ";
+	
+		for (int i = 1; i <= size; ++i)
+		{
+			x = a + rand() % (b - a + 1);
+			std::cout << x << ' ';
+			if (!flag)
+			{
+
+				if (predicate(x))
+					flag = i;
+			}
+			else
+				if (x > 0)
+					count++;
+		}
+		std::cout << '\n';
+		if (!flag)
+			result = -1;
+		else
+			if (flag == size)
+				result = 0;
+
+	return result;
+}
+void print_answer(int ind, int res)
+{
+	switch (ind)
+	{
+	case -1: std::cout << "Нет элементов с заданным свойством\n";
+		break;
+	case 1: std::cout << "Только один элемент с заданным свойством\n";
+		break;
+	case 0: std::cout << "Пустой диапазон\n";
+		break;
+	default: std::cout << "Результат равен: " << res << '\n';
+	}
+}
 
 template<typename T, typename Predicat>
 void Read_and_check(T& x, Predicat condition, const char* message)
