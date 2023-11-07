@@ -20,7 +20,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="data.txt">
+    <Text Include="task_universal.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="task1_sameNumb.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="task1_firstMax.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="task2_negative.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="task2_condition.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
   </ItemGroup>

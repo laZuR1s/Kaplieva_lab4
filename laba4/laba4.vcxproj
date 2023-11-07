@@ -130,7 +130,11 @@
     <ClCompile Include="laba4.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="data.txt" />
+    <Text Include="task2_condition.txt" />
+    <Text Include="task_universal.txt" />
+    <Text Include="task1_firstMax.txt" />
+    <Text Include="task1_sameNumb.txt" />
+    <Text Include="task2_negative.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
