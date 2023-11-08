@@ -43,6 +43,7 @@ int main()
 						int size;
 						std::cout << "\nВведите количество элементов: ";
 						Read_and_check(size, [](int x) {return x > 0; }, "\n-> ");
+						std::cin.ignore(std::cin.rdbuf()->in_avail());
 
 						if (mainChoice == 1)
 							std::cout << "\nНомер первого максимального элемента: " << task1(size, std::cin) << '\n';
@@ -52,6 +53,7 @@ int main()
 							int count = 0;
 							std::cout << "\nВведите цифру окончания числа: ";
 							Read_and_check(endNumb, [](int x) {return x > 0 && x < 10; }, "\n-> ");
+							std::cin.ignore(std::cin.rdbuf()->in_avail());
 
 							int res = task2(size, count, endNumb, std::cin, [endNumb](int x) {return abs(x) % 10 == endNumb; });
 							print_answer(res, count);
@@ -95,6 +97,7 @@ int main()
 						int size;
 						std::cout << "\nВведите количество случайных слагаемых: ";
 						Read_and_check(size, [](int x) {return x > 0; }, "\n-> ");
+						std::cin.ignore(std::cin.rdbuf()->in_avail());
 
 						int a, b;
 						std::cout << "\nВведите диапазон рандома(от A до B): ";
@@ -110,6 +113,7 @@ int main()
 
 							std::cout << "\nВведите цифру окончания числа: ";
 							Read_and_check(endNumb, [](int x) {return x > 0 && x < 10; }, "\n-> ");
+							std::cin.ignore(std::cin.rdbuf()->in_avail());
 
 							int res = task2(size, count, endNumb, a, b, [endNumb](int x) {return abs(x) % 10 == endNumb; });
 							print_answer(res, count);
@@ -177,6 +181,7 @@ int main_menu()
 		};
 	int choice = 0;
 	Read_and_check(choice, Lambda, "\n-> ");
+	std::cin.ignore(std::cin.rdbuf()->in_avail());
 	return choice;
 }
 
@@ -195,6 +200,7 @@ int choice_menu()
 		};
 	int choice = 0;
 	Read_and_check(choice, Lambda, "\n-> ");
+	std::cin.ignore(std::cin.rdbuf()->in_avail());
 	return choice;
 }
 
@@ -217,6 +223,7 @@ int task1(int size, std::istream& stream)
 				numb = i;
 			}
 		}
+		std::cin.ignore(std::cin.rdbuf()->in_avail());
 	}
 	else
 	{
@@ -281,6 +288,7 @@ int task2(int size, int& count, int endNumb, std::istream& stream, std::function
 				if (x > 0)
 					count++;
 		}
+		std::cin.ignore(std::cin.rdbuf()->in_avail());
 	}
 	else
 	{
